@@ -1,0 +1,9 @@
+python3
+texlive-full
+python3-pip
+git
+emacs
+neovim
+zsh
+curl
+

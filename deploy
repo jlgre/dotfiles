@@ -1,0 +1,49 @@
+#! /bin/sh
+
+if [ `whoami` != root ]
+then
+    echo "Root access is required"
+    exit
+fi
+
+EMACS_LOC=https://github.com/jlgre/emacs.d
+EMACS_DEST=~/.emacs.d
+
+echo "\nDownloading emacs config from $EMACS_LOC\n"
+
+# [ -d ~/.emacs.d ] && mv ~/.emacs.d ~/.emacs.d.bak
+# git clone $EMACS_LOC $EMACS_DEST
+
+APT_PROGS=""
+
+while read package; do
+    APT_PROGS="$APT_PROGS $package"
+done <resources/programs
+
+echo "\nInstalling $APT_PROGS\n"
+
+apt install $APT_PROGS -y
+
+PYTHON_PIPS=""
+
+while read pip; do
+    PYTHON_PIPS="$PYTHON_PIPS $pip"
+done <resources/pips
+
+echo "\nInstalling $PYTHON_PIPS\n"
+pip3 install $PYTHON_PIPS
+
+echo "\nSetting zsh as default shell\n"
+chsh -s $(which zsh)
+
+ZSH_FILE=zshrc.sh
+ZSH_DEST=~/.zshrc
+OH_MY_ZSH_LOC=https://github.com
+
+echo "\nInstalling oh-my-zsh\n"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+mv $ZSH_FILE $ZSH_DEST
+
+echo "\nInstalling nvm\n"
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
